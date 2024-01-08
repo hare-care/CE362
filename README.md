@@ -10,7 +10,7 @@
 To test the function of the CPU, you need to construct the assembly language instructions that you want to test, and use **riscv-gnu-toolchain** to interpret it to the hexadecimal file that can be read by Top_tb.v
 
 In this project, you can directly write the **assembly language**  / or write **C language** and convert it to assembly.
-* The suggested format of assembly or C files is already in the ** Sim/asm2hex(c2asm)/src** folder for reference.
+* The suggested format of assembly or C files is already in the **Sim/asm2hex(c2asm)/src** folder for reference.
 
 To generate the assembly language instructions from C file, you can
 ```
