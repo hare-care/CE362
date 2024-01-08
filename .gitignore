@@ -1,0 +1,7 @@
+*.log
+*.key
+*.diag
+*.history
+.simvision
+*.shm
+*.d
