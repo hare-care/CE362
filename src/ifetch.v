@@ -1,6 +1,8 @@
 module ifetch(
     input [31:0] branch_pc,
     input npc_control,
+    input rst,
+    input clk,
     output [31:0] instruction,
     output [31:0]PC
 );
