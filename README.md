@@ -1,7 +1,7 @@
 # CE362 Computer Architecture Project
 
 ## Single cycle diagram:
-![CE362](Doc/Singlecycle(1).png)
+![CE362](Doc/Diagram.png)
 ## Testdata construction
 * The professor provides some test data examples in the folder: testdata_samples
 * The testbench is in :  tb/Top_tb.v
