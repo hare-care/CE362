@@ -175,7 +175,7 @@ assign imm32 =  (opcode == `I_TYPE && (funct3 == 3'b001||funct3 == 3'b101))? sha
 		  wEn <= 1;  //reg file write enable 
 		  ALU_Control <= `ADD;
       case (funct3)
-       3'b000 :begin MemSize<=`SIZE_BYTE; load_extend_sign<= 1'b1; end//lb
+       3'b000 :begin MemSize<=`SIZE_BYTE; load_extend_sign<= 1'b1; end// lb
        3'b001 : begin MemSize<=`SIZE_HWORD; load_extend_sign<= 1'b1; end // lh 
        3'b010 : MemSize<= `SIZE_WORD; //lw
        3'b100:begin MemSize<=`SIZE_BYTE;load_extend_sign<= 1'b0; end//lbu 
