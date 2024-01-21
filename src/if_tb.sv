@@ -1,4 +1,4 @@
-`timescale 1ns/10ps
+`timescale 1ns/1ns
 
 module example_tb;
 
@@ -79,6 +79,12 @@ initial begin: input_read_process
     $readmemh("../sim/alu-mem_in.hex", DUT.IMEM.Mem);
     @(posedge reset);
     #50
+    branch_pc_in = 32'd40;
+    #10
+    npc_control_in = 1'b1;
+    #20
+    npc_control_in = 1'b0;
+    #10
     done = 1'b1;
 
 end

@@ -22,7 +22,7 @@ wire [31:0] branch_pc;
 wire npc_control;
 
 // fetch
-ifetch fetch (.branch_pc(), .npc_control(), .instruction(Instruction_IF), .PC (PC_IF));
+ifetch fetch (.branch_pc(branch_pc), .npc_control(npc_control), .instruction(Instruction_IF), .PC (PC_IF));
 
 // decode
 //decode_stage decode ((), );
@@ -80,11 +80,5 @@ always @(posedge clk or negedge rstn) begin
         ALU_output_WB <= ALU_output_Mem;
     end
 end
-
-
-
-
-
-
 
 endmodule
