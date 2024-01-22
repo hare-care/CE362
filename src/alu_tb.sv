@@ -118,7 +118,6 @@ initial begin: result_write_process
     $fclose(output_file);
     $fclose(compare_file);
 
-    $display("%x >>> %x = %x",32'hFFFFFFFF, 32'h3, ($signed(32'hFFFFFFFF) >>> 32'h3) );
     done = 1'b1;
 end
 
