@@ -4,8 +4,8 @@
 // See memaccess to construct branch PC using jump_flag and jump_target_PC
 module execution(
     input [5:0]ALU_Control,
-    input [1:0] op_A_sel,                 // select operand A, 00: readdata1, 01: PC, 10: PC+4, 11:0
-    input op_B_sel,                     // 1:immediate, 0: readdata2 
+    input [1:0] op_A_sel,   // select operand A, 00: readdata1, 01: PC, 10: PC+4, 11:0
+    input op_B_sel,         // 1:immediate, 0: readdata2 
     input [31:0] Rdata1, // read data 1
     input [31:0] Rdata2,  // read data 2
     input [31:0] imm32,
