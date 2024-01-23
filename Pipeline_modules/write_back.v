@@ -7,6 +7,7 @@ module write_back(
     output [31:0]RWrdata
 
 );
+//wb_sel 0->ALU_result  1->DataWord
 
 assign RWrdata = (wb_sel)? DataWord:ALU_result; // data back to register 
 
