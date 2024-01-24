@@ -17,7 +17,7 @@ module mem_access(
     input branch_op,       
     input [1:0]MemSize,
     // from execution stage 
-    input PC,
+    input [31:0] PC,
     input [31:0] imm32,
     input [31:0]Rdata2,     
     input [31:0]ALU_result, 
