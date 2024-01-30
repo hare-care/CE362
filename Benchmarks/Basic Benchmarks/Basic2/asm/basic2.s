@@ -2,16 +2,16 @@
  	.global _start
 _start:   
     # Load Upper Immediate
-    lui x1, 0x12345  # Load upper 20 bits into t0
+    lui x1, 0x12345  # Load upper 20 bits into x1
     # Add Upper Immediate to PC
-    auipc x2, 0x12345 # Load PC + offset into t1
-    jal x3, label1    # Jump to label1 and store return address in t2
+    auipc x2, 0x12345 # Load PC + offset into x2
+    jal x3, label1    # Jump to label1 and store return address in x3
 label1:
     beq x1, x2, label2
     addi x1,x1,4
     jalr x4, x0, 12  
 label2:
-    bne t0, t1, label3
+    bne x1, x2, label3
     addi x1,x1,4
     jalr x5, x0, 24
 label3:
