@@ -27,16 +27,16 @@ def branch_tester(iterations):
     start_value = 1
     for i in range(iterations):
         number = lcg()
-        if number > 100:
+        if number >= 100:
             start_value = start_value * -1
             print("multiplying by -1, value at ", start_value)
-        elif number > 80:
+        elif number >= 80:
             start_value = start_value * 3
             print("multiplying by 3, value at ", start_value)
-        elif number < 8:
+        elif number =< 8:
             start_value = start_value + 2047
             print("adding 2047, value at ", start_value)
-        elif number < 25:
+        elif number =< 25:
             start_value = start_value - 57
             print("subtracting 57, value at ", start_value)
         else:
