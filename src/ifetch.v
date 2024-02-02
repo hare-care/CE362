@@ -1,6 +1,8 @@
 module ifetch(
-    input [31:0] branch_pc,
+    //control signal from mem stage
     input npc_control,
+    // data
+    input [31:0] branch_pc,  // PC from exe stage
     input rst,
     input clk,
     output [31:0] instruction,
