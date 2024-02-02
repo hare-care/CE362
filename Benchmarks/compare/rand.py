@@ -34,8 +34,8 @@ def branch_tester(iterations):
             start_value = start_value * 3
             print("multiplying by 3, value at ", start_value)
         elif number < 8:
-            start_value = start_value + 4096
-            print("adding 4096, value at ", start_value)
+            start_value = start_value + 2047
+            print("adding 2047, value at ", start_value)
         elif number < 25:
             start_value = start_value - 57
             print("subtracting 57, value at ", start_value)
