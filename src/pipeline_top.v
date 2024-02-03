@@ -86,7 +86,7 @@ control control(
     .mem_wEn(mem_wEn_Dec),
     .MemSize(MemSize_Dec),
     .load_extend_sign(load_extend_sign_Dec),
-    .wb_sel()
+    .wb_sel(wb_sel_Dec)
 );
 // decode
 decode_stage decode (
