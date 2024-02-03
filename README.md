@@ -8,4 +8,5 @@ CE362 Computer Architecture Project
 * Identify Rdst_in and Rdst_out in decoder stage
 * change most statements to always combination from assign 
 * Optimize the branch and jump structures within execution stage and mem_access stage
-* Change several signals in Top module, still need to check the requires signal and modules in Top
+* add all the data and control signals in Top level
+* Check overall syntax, especially wire and reg
