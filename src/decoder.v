@@ -8,7 +8,7 @@ module decoder (
   output reg[31:0] imm32                      // extract and pass to execution
 );
 wire [6:0] opcode;
-wire [6:0] funct7;
+//wire [6:0] funct7;
 wire [2:0] funct3;
 // immediate wire
 wire[6:0]  s_imm_msb;
@@ -28,7 +28,7 @@ wire[31:0] uj_imm_32; // sign extend and and assign the right one
 wire[31:0] shamt_32;
 /* Instruction decoding */
 assign opcode = instruction[6:0];
-assign funct7 = instruction[31:25];
+//assign funct7 = instruction[31:25];
 assign funct3 = instruction[14:12];
 // Read register file
 assign read_sel2  = instruction[24:20];

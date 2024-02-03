@@ -1,0 +1,1 @@
+iverilog defines.v alu.v decoder.v decode_stage.v execution.v ifetch.v mem_access.v mem_reg_library.v write_back.v control.v pipeline_top.v

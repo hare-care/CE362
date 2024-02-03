@@ -1,6 +1,5 @@
 module control  (
   // Inputs from iFetch
-  input [31:0] PC,
   input [31:0] instruction,
   // Outputs to Reg File
   output reg wEn,
@@ -27,7 +26,8 @@ assign funct3 = instruction[14:12];
 
 //assign branch_op = opcode==`B_TYPE;
 // assign mem_wEn=(opcode==`S_TYPE)?1'b1:1'b0; 
-// assign wb_sel=(opcode=`I_TYPE_LOAD)?1'b1:1'b0;		 
+// assign wb_sel=(opcode=`I_TYPE_LOAD)?1'b1:1'b0;	
+
 //signal calculations for most wires 
 always @(*) begin 
   case (opcode) 
@@ -100,7 +100,7 @@ always @(*) begin
     case (funct3)
       3'b000 :begin MemSize<=`SIZE_BYTE; load_extend_sign<= 1'b1; end// lb
       3'b001 : begin MemSize<=`SIZE_HWORD; load_extend_sign<= 1'b1; end // lh 
-      3'b010 : MemSize<= `SIZE_WORD; //lw
+      3'b010 : begin MemSize<= `SIZE_WORD; load_extend_sign<=1'b1; end//lw 
       3'b100:begin MemSize<=`SIZE_BYTE;load_extend_sign<= 1'b0; end//lbu 
       3'b101:begin MemSize<=`SIZE_HWORD;load_extend_sign<= 1'b0; end//lhu
       default: begin MemSize<=`SIZE_BYTE;load_extend_sign<= 1'b0; end

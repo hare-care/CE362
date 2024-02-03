@@ -33,6 +33,14 @@ always @(*) begin
     end
 end
 // data memory access
-DataMem DMEM(.Addr(ALU_result), .Size(MemSize), .load_extend_sign(load_extend_sign),.DataIn(Rdata2), .DataOut(DataWord), .WEN(mem_wEn), .CLK(clk));
+DataMem DMEM(
+    .Addr(ALU_result), 
+    .Size(MemSize), 
+    .load_extend_sign(load_extend_sign),
+    .DataIn(Rdata2), 
+    .DataOut(DataWord), 
+    .WEN(mem_wEn), 
+    .CLK(clk)
+    );
 
 endmodule

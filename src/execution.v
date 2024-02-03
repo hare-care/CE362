@@ -7,8 +7,9 @@ module execution(
     input [5:0]ALU_Control,
     input branch_op,
     // data
-    input [31:0] operand_A, // read data 1
-    input [31:0] operand_B,  // read data 2
+    input [31:0] operand_A, // operand A
+    input [31:0] operand_B,  // operand B
+    input [31:0] Rdata1, //Read Data 1
     input [31:0] imm32,
     input [31:0] PC,//PC_Exec_in
     output [31:0] ALU_result,
