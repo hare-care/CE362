@@ -1,6 +1,7 @@
 module pipeline_top (
     input clk, rstn,
-    input [31:0] test
+    output reg halt
+   // input [31:0] test
 );
 
 // Pipeline register nets
@@ -57,6 +58,9 @@ reg load_extend_sign_Exec,load_extend_sign_Mem;
 wire wb_sel_Dec;
 reg wb_sel_Exec,wb_sel_Mem,wb_sel_WB;
 
+// halt detection
+wire halt_IF;
+
 //reg [31:0] Rt_Dec, Rt_Exec;  // not sure what it is 
 //reg [31:0] Reg_dest_Exec, Reg_dest_Mem, Reg_dest_WB;
 //reg [31:0] Zero_Exec, Zero_Mem;
@@ -73,7 +77,8 @@ ifetch fetch (
     .npc_control(npc_control), 
     //output
     .instruction(Instruction_IF), 
-    .PC (PC_IF)
+    .PC (PC_IF),
+    .halt(halt_IF)
     );
 //control unit
 control control(
@@ -155,6 +160,8 @@ write_back WB(
 // pipeline registers
 always @(posedge clk or negedge rstn) begin 
     if (!rstn) begin
+        // halt
+        halt<=1'b0;
     //control
         wrEn_Exec<=1'b0;
         wrEn_Mem<=1'b0;
@@ -210,6 +217,8 @@ always @(posedge clk or negedge rstn) begin
         //Zero_Mem <= 32'b0;
     end
     else begin
+        //halt
+        halt<=halt_IF;
         //conrtol path
         wrEn_Exec<=wrEn_Dec;
         ALU_Control_Exec<=ALU_Control_Dec;
