@@ -31,8 +31,7 @@ decoder decoder_unit (
       .rd(Rdst_out), 
       .imm32(imm32)            
    );
-  wire wrEn_RF;
-  assign wrEn_RF=!wrEn; // negative trigger
+
 RegFile RF(
         .AddrA(Rsrc1), 
         .DataOutA(Rdata1), 
@@ -40,7 +39,7 @@ RegFile RF(
         .DataOutB(Rdata2), 
 	      .AddrW(Rdst_in), 
         .DataInW(RWrdata), 
-        .WenW(wrEn_RF), 
+        .WenW(wrEn), 
         .CLK(clk)
         );
 

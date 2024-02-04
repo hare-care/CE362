@@ -58,24 +58,24 @@ end
 
 
  //write to memory  
-   always @ (negedge CLK)
-     if (!WEN) begin
-	case (Size)
-	  2'b00: begin // Write byte
-	     Mem[Addr] <= DataIn[7:0];
-	  end
-	  2'b01: begin  // Write halfword
-	     Mem[AddrH] <= DataIn[7:0];
-	     Mem[AddrH+1] <= DataIn[15:8];
-	  end
-	  2'b10, 2'b11: begin // Write word
-	     Mem[AddrW] <= DataIn[7:0];
-	     Mem[AddrW+1] <= DataIn[15:8];
-	     Mem[AddrW+2] <= DataIn[23:16];
-	     Mem[AddrW+3] <= DataIn[31:24];
-	  end
-	endcase // case (Size)
-     end // if (!WEN)
+always @ (negedge CLK)
+  if (!WEN) begin
+    case (Size)
+      2'b00: begin // Write byte
+        Mem[Addr] <= DataIn[7:0];
+      end
+      2'b01: begin  // Write halfword
+        Mem[AddrH] <= DataIn[7:0];
+        Mem[AddrH+1] <= DataIn[15:8];
+      end
+      2'b10, 2'b11: begin // Write word
+        Mem[AddrW] <= DataIn[7:0];
+        Mem[AddrW+1] <= DataIn[15:8];
+        Mem[AddrW+2] <= DataIn[23:16];
+        Mem[AddrW+3] <= DataIn[31:24];
+      end
+    endcase // case (Size)
+  end // if (!WEN)
       
 endmodule // InstMem
 //---------------------------------------register file----------------------------------
