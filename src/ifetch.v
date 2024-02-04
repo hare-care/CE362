@@ -6,22 +6,39 @@ module ifetch(
     input rst,
     input clk,
     output [31:0] instruction,
-    output [31:0]PC,
+    output reg[31:0]PC,
     output halt
 );
-    wire [31:0]NPC;
+    reg [31:0]NPC;
     wire [31:0]InstWord;
     wire [6:0]opcode;
 
-    assign NPC=npc_control ?  branch_pc: PC+4;
+    // assign NPC=npc_control ?  branch_pc: PC+4;
    // PC register, insturction fetch
-   Reg PC_REG(
-    .Din(NPC), 
-    .Qout(PC), 
-    .WEN(1'b0), 
-    .CLK(clk), 
-    .RST(rst)
-    );
+    always @ (negedge clk)begin
+     if (!rst)
+       NPC <= 32'b0;
+    else if (npc_control) begin
+        NPC<= branch_pc;
+    end
+    else begin
+        NPC <= PC+4;
+    end
+    end
+    always @(*) begin
+        if (!rst) 
+         PC=32'b0;
+        else
+         PC=NPC;
+    end
+
+//    Reg PC_REG(
+//     .Din(NPC), 
+//     .Qout(PC), 
+//     .WEN(1'b0), 
+//     .CLK(clk), 
+//     .RST(rst)
+//     );
    InstMem IMEM(
     .Addr(NPC), 
     .Size(`SIZE_WORD), 

@@ -2,7 +2,7 @@ module control  (
   // Inputs from iFetch
   input [31:0] instruction,
   // Outputs to Reg File
-  output reg wEn,
+  output reg wEn,   //write back to register file
   // Outputs to Execute/ALU
   output reg [1:0] op_A_sel,                 // select operand A, 00: readdata1, 01: PC, 10: PC+4, 11:0
   output reg op_B_sel,                      // 0:immediate, 1: readdata2

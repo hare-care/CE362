@@ -42,7 +42,7 @@ reg [31:0] PC_Mem;
 wire npc_control;  // from mem to IF
 //control unit
 wire wrEn_Dec;
-reg wrEn_Exec,wrEn_Mem;
+reg wrEn_Exec,wrEn_Mem,wrEN_WB;
 wire [1:0]op_A_sel;
 wire op_B_sel;
 wire [5:0]ALU_Control_Dec;
@@ -69,7 +69,7 @@ wire halt_IF;
 
 
 // fetch
-ifetch fetch (
+ifetch IF (
     .clk(clk),
     .rst(rstn),   //negative trigger
     // from mem_access
@@ -81,9 +81,9 @@ ifetch fetch (
     .halt(halt_IF)
     );
 //control unit
-control control(
+control Control(
     .instruction(Instruction_Dec),
-    .wEn(wrEn),
+    .wEn(wrEn_Dec),
     .op_A_sel(op_A_sel),
     .op_B_sel(op_B_sel),
     .ALU_Control(ALU_Control_Dec),
@@ -94,15 +94,16 @@ control control(
     .wb_sel(wb_sel_Dec)
 );
 // decode
-decode_stage decode (
+decode_stage Dec (
+    .clk(clk),
     //control signals
-    .wrEn(wrEn),
+    .wrEn(wrEN_WB),
     .op_A_sel(op_A_sel),
     .op_B_sel(op_B_sel),
     // from Ifetch
     .PC(PC_Dec),
-    // from Ifetch
     .instruction(Instruction_Dec),
+    // from WB
     .Rdst_in(Rd_WB),   //write back to register file
     .RWrdata(RWrdata_WB),
     //output 
@@ -115,7 +116,7 @@ decode_stage decode (
 );
 
 // execution
-execution exec (
+execution Exec (
     .ALU_Control(ALU_Control_Exec),
     .branch_op(branch_op),
     // from decode
@@ -130,7 +131,7 @@ execution exec (
     );
 
 // memory
-mem_access mem(
+mem_access Mem(
     .clk(clk),
     // control
     .mem_wEn(mem_wEn_Mem),
@@ -165,6 +166,7 @@ always @(posedge clk or negedge rstn) begin
     //control
         wrEn_Exec<=1'b0;
         wrEn_Mem<=1'b0;
+        wrEN_WB<=1'b0;
         ALU_Control_Exec<=6'b0;
         branch_op_Exec<=1'b0;
         branch_op_Mem<=1'b0;
@@ -231,6 +233,7 @@ always @(posedge clk or negedge rstn) begin
         wrEn_Mem<=wrEn_Exec;
         branch_op_Mem<=branch_op_Exec;
         mem_wEn_Mem<=mem_wEn_Exec;
+        MemSize_Mem<=MemSize_Exec;
         load_extend_sign_Mem<=load_extend_sign_Exec;
         wb_sel_Mem<=wb_sel_Exec;
 
@@ -260,6 +263,7 @@ always @(posedge clk or negedge rstn) begin
         Data_mem_WB <= Data_mem_Mem;
         ALU_output_WB <= ALU_output_Mem;
         Rd_WB<=Rd_Mem; // add more rd 
+        wrEN_WB<=wrEn_Mem;
 
         // Rt_Exec <= Rt_Dec;
         //  Zero_Mem <= Zero_Exec;
