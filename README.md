@@ -10,3 +10,10 @@ CE362 Computer Architecture Project
 * Optimize the branch and jump structures within execution stage and mem_access stage
 * add all the data and control signals in Top level
 * Check overall syntax, especially wire and reg
+* Fix errors on wrEn, memwren, from active trigger to negative trigger
+
+## Current Stage
+* Finish top level constructions, go thorugh basic operation using Pipeline1.s
+## Future improvement
+* data hazard and control hazard for branch and jump.
+* testing with Pipeline2.s
