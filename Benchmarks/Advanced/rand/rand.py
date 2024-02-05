@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 seed = 42
 multiplier = 1664525
 increment = 1013904223
@@ -25,6 +25,7 @@ def gen_distribution():
 
 def branch_tester(iterations):
     start_value = 1
+    lcg()
     for i in range(iterations):
         number = lcg()
         if number >= 100:
@@ -33,10 +34,10 @@ def branch_tester(iterations):
         elif number >= 80:
             start_value = start_value * 3
             print("multiplying by 3, value at ", start_value)
-        elif number =< 8:
+        elif number <= 8:
             start_value = start_value + 2047
             print("adding 2047, value at ", start_value)
-        elif number =< 25:
+        elif number <= 25:
             start_value = start_value - 57
             print("subtracting 57, value at ", start_value)
         else:
@@ -45,7 +46,7 @@ def branch_tester(iterations):
         
     print("you have ended up with: ", start_value)
 
-# branch_tester(12)
+branch_tester(10)
     
     
 

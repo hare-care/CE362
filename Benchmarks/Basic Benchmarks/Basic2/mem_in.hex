@@ -1,0 +1,21 @@
+123450b7        // lui x1 0x12345
+004001ef        // jal x3 4 <label1>
+00208663        // beq x1 x2 12 <label2>
+00408093        // addi x1 x1 4
+00c00267        // jalr x4 x0 12
+00209663        // bne x1 x2 12 <label3>
+00408093        // addi x1 x1 4
+018002e7        // jalr x5 x0 24
+0020c663        // blt x1 x2 12 <label4>
+00810113        // addi x2 x2 8
+02400367        // jalr x6 x0 36
+0020d663        // bge x1 x2 12 <label5>
+00408093        // addi x1 x1 4
+030003e7        // jalr x7 x0 48
+0020e663        // bltu x1 x2 12 <label6>
+00410113        // addi x2 x2 4
+03c00467        // jalr x8 x0 60
+0020f663        // bgeu x1 x2 12 <label7>
+00408093        // addi x1 x1 4
+048004e7        // jalr x9 x0 72
+00000000        
