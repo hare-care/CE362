@@ -1,0 +1,1 @@
+read_hdl ../../src/defines.v ../../src/pipeline_top.v ../../src/alu.v ../../src/control.v ../../src/decode_stage.v ../../src/decoder.v  ../../src/execution.v ../../src/ifetch.v ../../src/mem_access.v ../../src/mem_reg_library.v ../../src/write_back.v
