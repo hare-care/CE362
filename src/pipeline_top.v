@@ -1,8 +1,13 @@
 module pipeline_top (
     input clk, rstn,
-    output reg halt
+    output halt_out,
+    output [31:0] instr_out, data_out
    // input [31:0] test
 );
+
+reg halt;
+
+
 
 // Pipeline register nets
 //PC forward
@@ -65,6 +70,9 @@ wire halt_IF;
 //reg [31:0] Reg_dest_Exec, Reg_dest_Mem, Reg_dest_WB;
 //reg [31:0] Zero_Exec, Zero_Mem;
 
+assign halt_out = halt;
+assign instr_out = Instruction_Dec;
+assign data_out = RWrdata_WB;
 
 
 
