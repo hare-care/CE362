@@ -5,3 +5,7 @@
 .simvision
 *.shm
 *.d
+genus*
+*.tstamp
+.st_launch*
+fv
