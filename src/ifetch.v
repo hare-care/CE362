@@ -10,9 +10,18 @@ module ifetch(
     output halt
 );
     reg [31:0]NPC;
+    reg [31:0] PC_in;
+    wire [31:0]PC_out;
     wire [31:0]InstWord;
     wire [6:0]opcode;
 
+    //mini decoder for JAL and static branch predict
+    mini_decoder mini_decoder(
+        .instruction(InstWord),
+        .PC(PC_in),
+        .PC_predict(PC_out)
+    );
+    assign PC=PC_in;
     // assign NPC=npc_control ?  branch_pc: PC+4;
    // PC register, insturction fetch
     always @ (negedge clk)begin
@@ -22,14 +31,14 @@ module ifetch(
         NPC<= branch_pc;
     end
     else begin
-        NPC <= PC+4;
+        NPC <= PC_out
     end
     end
     always @(*) begin
         if (!rst) 
-         PC=32'b0;
+         PC_in=32'b0;
         else
-         PC=NPC;
+         PC_in=NPC;
     end
 
 //    Reg PC_REG(
