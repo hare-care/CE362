@@ -9,3 +9,4 @@ genus*
 *.tstamp
 .st_launch*
 fv
+*.tar.xz
