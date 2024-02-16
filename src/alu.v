@@ -22,9 +22,13 @@ always @(*) begin
     (`JALR) : ALU_result <= operand_A;
     //compare
     (`SLT)  : ALU_result <= ({31'b0,$signed(operand_A)<$signed(operand_B)});
+    (`BLT)  : ALU_result <= ({31'b0,$signed(operand_A)<$signed(operand_B)});
     (`SLTU) : ALU_result <= ({31'b0,$unsigned(operand_A)<$unsigned(operand_B)});
-    //remove branch
-
+    (`BLTU) : ALU_result <=  ({31'b0,$unsigned(operand_A)<$unsigned(operand_B)});
+    (`BGE)  : ALU_result <= ({31'b0,$signed(operand_A)>=$signed(operand_B)});
+    (`BGEU) : ALU_result <= ({31'b0,$unsigned(operand_A)>=$unsigned(operand_B)});
+    (`BEQ)  : ALU_result <= ({31'b0,operand_A == operand_B});
+    (`BNE)  : ALU_result <= ({31'b0,operand_A != operand_B});
     default: ALU_result <= 32'b0; 
   endcase
 

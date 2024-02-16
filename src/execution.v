@@ -4,31 +4,21 @@
 // See memaccess to construct branch PC using jump_flag and jump_target_PC
 module execution(
   //control signal
-  input [1:0] op_A_sel,
-  input op_B_sel,
-  input [5:0]ALU_Control,
+    input [5:0]ALU_Control,
+    input branch_op,
     // data
-
-  //from decode
-  input [31:0] Rdata1, //Read Data 1
-  input [31:0] Rdata2, //Read Data 1
-  input [31:0] imm32,
-  input [31:0] PC,//PC_Exec_in
-  input [4:0] Rsrc1_Exec,
-  input [4:0] Rsrc2_Exec,
-  // fromWB
-  input [4:0] Rd_WB,
-  input wrEn_WB,
-  input [31:0]RWrdata_WB,
-  //from Mem
-  input [4:0] Rd_Mem,
-  input mem_wEn_Mem,
-  input [31:0]Data_mem_Mem,
-  output [31:0] ALU_result
-
+    input [31:0] operand_A, // operand A
+    input [31:0] operand_B,  // operand B
+    input [31:0] Rdata1, //Read Data 1
+    input [31:0] imm32,
+    input [31:0] PC,//PC_Exec_in
+    output [31:0] ALU_result,
+    output reg jump_flag,
+    output reg [31:0]jump_target_PC    // PC_exec_out
 );
-reg [31:0] operand_A; // operand A
-reg [31:0] operand_B;  // operand B
+
+
+
 //ALU
 ALU ALU_inst (
   .ALU_Control(ALU_Control),  
@@ -37,44 +27,24 @@ ALU ALU_inst (
   .ALU_result(ALU_result)     
 );
 
-
-/*adding data path in operand a and b mux to fix data hazard*/
-
-// process operand A B
+// process jump and branch operation
 always @(*) begin
-  //data forward operand-A
-  if(Rd_WB!=5'b0 && Rd_WB==Rsrc1_Exec&& wrEN_WB ==1'b0) begin
-    operand_A=RWrdata_WB;  //forward from WB to exec
+  if (ALU_Control == `JAL)begin   // jump operation 
+    jump_target_PC=PC + imm32;
+    jump_flag=1'b1;
   end
-  else if (Rd_Mem!=5'b0 && Rd_Mem==Rsrc1_Exec && mem_wEn_Mem==1'b0) begin
-    operand_A=Data_mem_Mem;   //from mem to exec
+  else if (ALU_Control == `JALR) begin  // jump operation 
+    jump_target_PC=Rdata1+imm32;
+    jump_flag=1'b1;
   end
-  else begin
-    //normal selection
-    case (op_A_sel)
-      2'b00: operand_A=Rdata1;
-      2'b01: operand_A=PC;  //AUIPC 
-      2'b10:  operand_A=PC + 32'd4; // jump(can be moved to IF)
-      default: operand_A=32'b0;//LUI
-    endcase
-  end
-  // data forward operand_B
-  if(Rd_WB!=5'b0 && Rd_WB==Rsrc2&& wrEN_WB ==1'b0) begin
-    operand_B=RWrdata_WB;  //forward from WB to exec
-  end
-  else if (Rd_Mem!=5'b0 && Rd_Mem==Rsrc2 && mem_wEn_Mem==1'b0) begin
-    operand_B=Data_mem_Mem;
+  else if (branch_op==1'b1) begin    // branch operation 
+    jump_target_PC=PC + imm32;
+    jump_flag=1'b0;
   end
   else begin
-    //normal selection 
-    if (op_B_sel==1'b1) begin
-      operand_B=imm32;
-    end
-    else begin
-      operand_B=Rdata2;
-    end
+    jump_target_PC=32'b0;
+    jump_flag=1'b0;
   end
 end
-  /*adding data path in operand a and b mux to fix data hazard*/
 
 endmodule
