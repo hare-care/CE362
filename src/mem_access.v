@@ -19,19 +19,7 @@ module mem_access(
     output reg npc_control    
 
 );
-reg ALU_branch_flag;
-reg branch_jump_flag;
-// process next PC control signal based on ALU branch result
-always @(*) begin
-    ALU_branch_flag=ALU_result[0];
-    branch_jump_flag = branch_op & ALU_branch_flag;
-    if (jump_flag||branch_jump_flag) begin   // identify jump operation
-        npc_control=1'b1;
-    end
-    else begin
-        npc_control=1'b0; 
-    end
-end
+
 // data memory access
 DataMem DMEM(
     .Addr(ALU_result), 

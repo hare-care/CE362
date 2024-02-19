@@ -59,8 +59,8 @@ assign u_imm_32 = {u_imm, 12'b000000000000};
 assign sb_imm_orig = {instruction[31], instruction[7], instruction[30:25], instruction[11:8], 1'b0};
 assign sb_imm_32 = { {19{sb_imm_orig[12]}}, sb_imm_orig}; 
  // UJ-type 
-assign uj_imm = {instruction[31], instruction[19:12], instruction[20], instruction[30:21], 1'b0};
-assign uj_imm_32 = { {11{uj_imm[20]}}, uj_imm};
+// assign uj_imm = {instruction[31], instruction[19:12], instruction[20], instruction[30:21], 1'b0};
+// assign uj_imm_32 = { {11{uj_imm[20]}}, uj_imm};
 //shamt for slli,srli,srai
 assign shamt = instruction[24:20];
 assign shamt_32 = {27'b000000000000000000000000000, shamt};
@@ -76,8 +76,8 @@ always @(*) begin
         `I_TYPE_LOAD: imm32 = i_imm_32; // I-type, Load
         `S_TYPE: imm32 = s_imm_32; // S-type
         `B_TYPE: imm32 = sb_imm_32; // Branches
-        `J_JAL: imm32 = uj_imm_32; // JAL
-        `I_JALR: imm32 = i_imm_32; // JALR
+        // `J_JAL: imm32 = uj_imm_32; // JAL
+        // `I_JALR: imm32 = i_imm_32; // JALR
         `U_AUIPC: imm32 = u_imm_32; // Auipc
         `U_LUI: imm32 = u_imm_32; // Lui
         default: imm32 = 0; // default

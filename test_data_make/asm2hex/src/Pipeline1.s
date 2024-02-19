@@ -49,3 +49,7 @@ _start:
     lw x26, 16(x0) # Load word
     lbu x27, 20(x0) # Load byte unsigned
     lhu x28, 24(x0) # Load half-word unsigned
+    addi x0, x0, 0
+    addi x0, x0, 0
+    addi x0, x0, 0
+    addi x0, x0, 0
