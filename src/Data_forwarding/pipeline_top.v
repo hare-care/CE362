@@ -8,7 +8,8 @@ module pipeline_top (
 reg halt;
 
 // stall and flush
-wire stall;
+wire stall_all, stall_IF, stall_Dec;
+wire flush_all, flush_IF, flush_Dec;
 
 
 
@@ -281,54 +282,54 @@ always @(posedge clk or negedge rstn) begin
         //halt
         halt<=halt_IF;
         //conrtol path
-        wrEn_Exec<=(stall)? wrEn_Exec : wrEn_Dec;
-        ALU_Control_Exec<=(stall)? ALU_Control_Exec : ALU_Control_Dec;
-        branch_op_Exec<=(stall)? branch_op_Exec : branch_op_Dec;
-        mem_wEn_Exec<=(stall)? mem_wEn_Exec : mem_wEn_Dec;
-        MemSize_Exec<=(stall)? MemSize_Exec : MemSize_Dec;
-        load_extend_sign_Exec<=(stall)? load_extend_sign_Exec : load_extend_sign_Dec;
-        wb_sel_Exec<=(stall)? wb_sel_Exec : wb_sel_Dec;
-        op_A_sel_Exec<=(stall)?op_A_sel_Exec:op_A_sel_Dec;
-        op_B_sel_Exec<=(stall)?op_B_sel_Exec:op_A_sel_Dec;
-        PC_Exec_in<=(stall)?PC_Exec_in:PC_Dec_in;
-        forward_select_A_Exec<=(stall)?forward_select_A_Exec:forward_select_A_Dec;
-        forward_select_B_Exec<=(stall)? forward_select_B_Exec:forward_select_B_Dec;
+        wrEn_Exec<=(stall_all | stall_Dec)? wrEn_Exec : wrEn_Dec;
+        ALU_Control_Exec<=(stall_all | stall_Dec)? ALU_Control_Exec : ALU_Control_Dec;
+        branch_op_Exec<=(stall_all | stall_Dec)? branch_op_Exec : branch_op_Dec;
+        mem_wEn_Exec<=(stall_all | stall_Dec)? mem_wEn_Exec : mem_wEn_Dec;
+        MemSize_Exec<=(stall_all | stall_Dec)? MemSize_Exec : MemSize_Dec;
+        load_extend_sign_Exec<=(stall_all | stall_Dec)? load_extend_sign_Exec : load_extend_sign_Dec;
+        wb_sel_Exec<=(stall_all | stall_Dec)? wb_sel_Exec : wb_sel_Dec;
+        op_A_sel_Exec<=(stall_all | stall_Dec)?op_A_sel_Exec:op_A_sel_Dec;
+        op_B_sel_Exec<=(stall_all | stall_Dec)?op_B_sel_Exec:op_A_sel_Dec;
+        PC_Exec_in<=(stall_all | stall_Dec)?PC_Exec_in:PC_Dec_in;
+        forward_select_A_Exec<=(stall_all | stall_Dec)?forward_select_A_Exec:forward_select_A_Dec;
+        forward_select_B_Exec<=(stall_all | stall_Dec)? forward_select_B_Exec:forward_select_B_Dec;
 
-        wrEn_Mem<=(stall)? wrEn_Mem : wrEn_Exec; // duplicate in question
-        branch_op_Mem<=(stall)? branch_op_Mem : branch_op_Exec;
-        mem_wEn_Mem<=(stall)? mem_wEn_Mem : mem_wEn_Exec;
-        MemSize_Mem<=(stall)? MemSize_Mem : MemSize_Exec;
-        load_extend_sign_Mem<=(stall)? load_extend_sign_Mem : load_extend_sign_Exec;
-        wb_sel_Mem<=(stall)? wb_sel_Mem : wb_sel_Exec;
+        wrEn_Mem<=(stall_all)? wrEn_Mem : wrEn_Exec; // duplicate in question
+        branch_op_Mem<=(stall_all)? branch_op_Mem : branch_op_Exec;
+        mem_wEn_Mem<=(stall_all)? mem_wEn_Mem : mem_wEn_Exec;
+        MemSize_Mem<=(stall_all)? MemSize_Mem : MemSize_Exec;
+        load_extend_sign_Mem<=(stall_all)? load_extend_sign_Mem : load_extend_sign_Exec;
+        wb_sel_Mem<=(stall_all)? wb_sel_Mem : wb_sel_Exec;
 
-        wb_sel_WB<=(stall)? wb_sel_WB : wb_sel_Mem;
-        wrEn_Mem<=(stall)? wrEn_Mem : wrEn_Exec; // there seems to be duplicate is this right?
+        wb_sel_WB<=(stall_all)? wb_sel_WB : wb_sel_Mem;
+        wrEn_Mem<=(stall_all)? wrEn_Mem : wrEn_Exec; // there seems to be duplicate is this right?
 
         // data path
-        PC_Dec_in <= (stall)? PC_Dec_in : PC_IF;
-        Instruction_Dec <= (stall)? Instruction_Dec : Instruction_IF;
+        PC_Dec_in <= (stall_all | stall_IF)? PC_Dec_in : PC_IF;
+        Instruction_Dec <= (stall_all | stall_IF)? Instruction_Dec : Instruction_IF;
 
-        PC_Exec_in <= (stall)? PC_Exec_in : PC_Dec_in;
-        A_Exec <= (stall)? A_Exec : A_Dec;
-        B_Exec <= (stall)? B_Exec : B_Dec;
-        Rdata1_Exec<= (stall)? Rdata1_Exec : Rdata1_Dec;
-        Rdata2_Exec<= (stall)? Rdata2_Exec : Rdata2_Dec;
-        Imm_Exec <= (stall)? Imm_Exec : Imm_Dec;
-        Rd_Exec <= (stall)? Rd_Exec : Rd_Dec;
-        Instruction_Exec<=(stall)?Instruction_Exec:Instruction_Dec;
+        PC_Exec_in <= (stall_all | stall_Dec)? PC_Exec_in : PC_Dec_in;
+        A_Exec <= (stall_all | stall_Dec)? A_Exec : A_Dec;
+        B_Exec <= (stall_all | stall_Dec)? B_Exec : B_Dec;
+        Rdata1_Exec<= (stall_all | stall_Dec)? Rdata1_Exec : Rdata1_Dec;
+        Rdata2_Exec<= (stall_all | stall_Dec)? Rdata2_Exec : Rdata2_Dec;
+        Imm_Exec <= (stall_all | stall_Dec)? Imm_Exec : Imm_Dec;
+        Rd_Exec <= (stall_all | stall_Dec)? Rd_Exec : Rd_Dec;
+        Instruction_Exec<=(stall_all | stall_Dec)?Instruction_Exec:Instruction_Dec;
 
-        PC_Mem <= (stall)? PC_Mem : PC_Exec_out;
-        ALU_output_Mem <= (stall)? ALU_output_Mem : ALU_output_Exec;
-        Rdata2_Mem<= (stall)? Rdata2_Mem : Rdata2_Exec;
-        Rd_Mem<= (stall)? Rd_Mem : Rd_Exec;  // add more rd 
-        jump_flag_Mem<= (stall)? jump_flag_Mem : jump_flag_Exec; // add jump flag
-        Instruction_Mem<=(stall)? Instruction_Mem:Instruction_Exec;
+        PC_Mem <= (stall_all)? PC_Mem : PC_Exec_out;
+        ALU_output_Mem <= (stall_all)? ALU_output_Mem : ALU_output_Exec;
+        Rdata2_Mem<= (stall_all)? Rdata2_Mem : Rdata2_Exec;
+        Rd_Mem<= (stall_all)? Rd_Mem : Rd_Exec;  // add more rd 
+        jump_flag_Mem<= (stall_all)? jump_flag_Mem : jump_flag_Exec; // add jump flag
+        Instruction_Mem<=(stall_all)? Instruction_Mem:Instruction_Exec;
 
-        Data_mem_WB <= (stall)? Data_mem_WB : Data_mem_Mem;
-        ALU_output_WB <= (stall)? ALU_output_WB : ALU_output_Mem;
-        Rd_WB<= (stall)? Rd_WB : Rd_Mem; // add more rd 
-        wrEN_WB<= (stall)? wrEN_WB : wrEn_Mem;
-        Instruction_WB<=(stall)? Instruction_WB:Instruction_Mem;
+        Data_mem_WB <= (stall_all)? Data_mem_WB : Data_mem_Mem;
+        ALU_output_WB <= (stall_all)? ALU_output_WB : ALU_output_Mem;
+        Rd_WB<= (stall_all)? Rd_WB : Rd_Mem; // add more rd 
+        wrEN_WB<= (stall_all)? wrEN_WB : wrEn_Mem;
+        Instruction_WB<=(stall_all)? Instruction_WB:Instruction_Mem;
 
         // Rt_Exec <= Rt_Dec;
         //  Zero_Mem <= Zero_Exec;
