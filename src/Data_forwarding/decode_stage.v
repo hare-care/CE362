@@ -74,6 +74,31 @@ branch_unit branch_unit(
   .operand_B(operand_B),
   .branch_result(branch_result)
 );
+reg [1:0]predict_result;
+
+always @(*) begin
+    // check prediction result
+  if (imm32[31]==1'b1) begin  // it is a jump back, predict PC jump
+    if (branch_result==1'b1) begin  //right prediction,  the PC has jumped, continue
+      predict_result=2'b11; 
+    end
+    else if (branch_result==1'b0) begin //wrong prediction, the PC doesnt jump, flush 1 stage and reload the PC 
+      predict_result=1'b01;
+    end
+  end
+  else if (imm32[31]=1'b0) begin  // no jump back, predict PC+4
+    if (branch_result==1'b1) begin  //  predict wrong, PC should jump, load PC + imm
+      predict_result=1'b10;
+    end
+    else if (branch_result==1'b0) begin //  predict right, PC not jump, continue 
+        predict_result=2'b11; 
+    end
+  end
+  else begin
+    predict_result=2'b0;
+  end
+end
+
 //control PC+4 write  to register file for JAL and JALR   
 always @(*) begin
   // save the PC when it is a jump 
@@ -85,7 +110,7 @@ always @(*) begin
   else begin
     Rdst_in=Rd_WB;
     RWrdata=RWrdata_WB;
-    wrEn=wrEn_WB;
+    wrEn=wrEN_WB;
   end
 end 
 //regiter the key decision signals
@@ -116,7 +141,7 @@ always @(*) begin
     forward_select_B_Dec=2'b0;
     /* it is branch_op and JALR, check conflict of register*/
   //start
-  if (branch_op==1'b1 && ALU_Control==`JALR)  begin // if branch or JALR
+  if (branch_op==1'b1 || ALU_Control==`JALR)  begin // if branch or JALR
    //not a stall and wait, check conflict regiter or direct calculate branch and JALR
     if (wait_signal==1'b0) begin 
       // conflict with Rsrc1, wait for 1 cycle
@@ -168,13 +193,13 @@ always @(*) begin
         else
           operand_B=ALU_output_Mem;   //Arithmetic operation
       end
-      //error scnario
-      if (forward_select_A==2'b00 && forward_select_B==2'b00) begin
-        //error
-        operand_A=32'b0;
-        operand_B=32'b0;
-        wait_signal_c=1'b0;
-      end
+      // //error scnario
+      // if (forward_select_A==2'b00 && forward_select_B==2'b00) begin
+      //   //error
+      //   operand_A=32'b0;
+      //   operand_B=32'b0;
+      //   wait_signal_c=1'b0;
+      // end
     end
     //no conflict in this cycle, calculate branch and JALR 
     if (wait_signal_c==1'b0) begin 

@@ -8,17 +8,11 @@ module execution(
   input [31:0] Rdata2, //Read Data 1
   input [31:0] imm32,
   input [31:0] PC,//PC_Exec_in
-  input [4:0] Rsrc1_Exec,
-  input [4:0] Rsrc2_Exec,
   input [1:0] forward_select_A,
   input [1:0] forward_select_B,
   // fromWB
-  input [4:0] Rd_WB,
-  input wrEn_WB,
   input [31:0]RWrdata_WB,
   //from Mem
-  input [4:0] Rd_Mem,
-  input mem_wEn_Mem,
   input [31:0]Data_mem_Mem,
   input [31:0] ALU_output_Mem,
   input [6:0]opcode_Mem,
@@ -54,7 +48,8 @@ always @(*) begin
     case (op_A_sel)
       2'b00: operand_A=Rdata1;
       2'b01: operand_A=PC;  //AUIPC 
-      2'b10:  operand_A=PC + 32'd4; // jump(should be removed)
+    //  2'b10:  operand_A=PC + 32'd4; // jump(should be removed)
+      2'b11: operand_A=32'b0;//LUI
       default: operand_A=32'b0;//LUI
     endcase
   end

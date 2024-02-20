@@ -9,14 +9,13 @@ module ifetch(
     output [31:0]PC,
     output halt
 );
-    reg [31:0]NPC;
     reg [31:0] PC_in;
     wire [31:0]PC_out;
     wire [31:0]InstWord;
     wire [6:0]opcode;
 
    InstMem IMEM(
-    .Addr(NPC), 
+    .Addr(PC_in), 
     .Size(`SIZE_WORD), 
     .DataOut(InstWord), 
     .CLK(clk)
@@ -27,8 +26,8 @@ module ifetch(
         .PC(PC_in),
         .PC_predict(PC_out)
     );
-   assign PC=PC_in;
-    // assign NPC=npc_control ?  branch_pc: PC+4;
+   assign PC=PC_in;  // output for the current PC value
+   // assign instruction_PC=npc_control ?  branch_pc: PC_in+4; // select for the right PC to get instruction
    // PC register, insturction fetch
     always @ (negedge clk)begin
         if (!rst) begin
