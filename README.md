@@ -16,6 +16,7 @@ CE362 Computer Architecture Project
 * add mini decoder to do JAL and static branch prediction at IF stage
 * add branch and JALR calculation at Dec stage, need to stall and wait 1 cycle if conflict
 * add data forwarding at Dec and Exec, detect the conflict at Dec, forward the data at Exec
+* add stall and flush to the IF and Dec stage
 ## Future improvement
 * data hazard and control hazard for branch and jump.
 * testing with Pipeline2.s
