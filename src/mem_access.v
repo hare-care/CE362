@@ -6,19 +6,14 @@ module mem_access(
     input clk,
     //from conrtol unit 
     input mem_wEn,          
-    input load_extend_sign,  
-    input branch_op,       
+    input load_extend_sign,       
     input [1:0]MemSize,
     // from execution stage 
-    input [31:0] PC,
-    input [31:0] imm32,
     input [31:0]Rdata2,     
-    input [31:0]ALU_result, 
-    input jump_flag,   
-    output [31:0]DataWord,
-    output reg npc_control    
-
+    input [31:0]ALU_result,
+    output [31:0]DataWord
 );
+
 
 // data memory access
 DataMem DMEM(
