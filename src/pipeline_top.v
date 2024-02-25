@@ -9,6 +9,10 @@ reg halt;
 
 wire stall;
 
+wire reset;
+
+assign reset = (!rstn | flush)? 0:1;
+
 
 
 // Pipeline register nets
@@ -169,8 +173,8 @@ write_back WB(
     .RWrdata(RWrdata_WB)
 );
 // pipeline registers
-always @(posedge clk or negedge rstn) begin 
-    if (!rstn) begin
+always @(posedge clk or negedge reset) begin 
+    if (!reset) begin
         // halt
         halt<=1'b0;
     //control
