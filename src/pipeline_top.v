@@ -8,6 +8,7 @@ module pipeline_top (
 reg halt;
 
 wire stall;
+wire flush;
 
 wire reset;
 
