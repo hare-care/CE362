@@ -14,7 +14,6 @@ module control  (
   output reg load_extend_sign,
   // Outputs to Writeback
   output reg wb_sel
-
 );
 
 wire [6:0] opcode;
@@ -44,6 +43,8 @@ always @(*) begin
                           ALU_Control <= `ADD;
                   end else if (funct7==7'b0100000) begin
                           ALU_Control <= `SUB;     //sub  
+                  end else if (funct7==7'b0000001) begin
+                          ALU_Control <= `MUL;
                   end
               end
               3'b001: ALU_Control<=`SLL; //sll
