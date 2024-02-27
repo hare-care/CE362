@@ -37,3 +37,5 @@
 `define JALR 6'b111111
 `define JAL 6'b011111
 `define DEFAULT 6'bx
+//multiply
+`define MUL 6'b0110011
