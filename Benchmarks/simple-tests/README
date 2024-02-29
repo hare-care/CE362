@@ -1,0 +1,7 @@
+How to use these tests:
+
+1. Choose any *-mem_in.hex and copy it to mem_in.hex
+2. Use the existing regs_in.hex (all registers = 0)
+3. Run your cpu using the test bench provided
+4. Compare the resulting regs_out.hex to the corresponding *-regs_out.hex
+

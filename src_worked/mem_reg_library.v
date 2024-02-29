@@ -3,8 +3,8 @@
 module InstMem(Addr, Size, DataOut, CLK);
    input [31:0] Addr;
    input [1:0] 	Size;
-   output [31:0] DataOut;
-   reg [31:0] DataOut;   
+   output reg[31:0] DataOut;
+   //reg [31:0] DataOut;   
    input 	CLK;
    reg [7:0] 	Mem[0:1024];
    wire [31:0] 	AddrW;
