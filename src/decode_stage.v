@@ -20,6 +20,8 @@ module decode_stage(
     input [31:0] Data_mem_Mem,
     input [31:0] ALU_output_Mem,
     input [6:0]opcode_Mem,  // define whether it is a load operation 
+    input [6:0]opcode_Exec,
+    input [6:0]opcode_WB,
     //to Exec
     output [31:0]Rdata1,
     output [31:0]Rdata2,
@@ -44,7 +46,6 @@ reg [1:0] forward_select_A,forward_select_A_c;
 reg [1:0] forward_select_B,forward_select_B_c;
 reg jump_flag,branch_jump_flag;
 reg [1:0]predict_result;
-
 decoder decoder_unit (
       // input            
       .instruction(instruction),  
@@ -123,34 +124,35 @@ always @(*) begin
    //not a stall and wait, check conflict regiter or direct calculate branch and JALR
     if (wait_signal==1'b0) begin 
       // conflict with Rsrc1, wait for 1 cycle
-      if (Rd_WB!=5'b0 && Rd_WB==Rsrc1 && wrEN_WB==1'b1) begin
-        wait_signal_c=1'b1;
-        forward_select_A_c=2'b11;
+      if (Rd_WB!=5'b0 && Rd_WB==Rsrc1 && wrEN_WB==1'b1 && opcode_WB!=`B_TYPE && opcode_WB!=`S_TYPE) begin
+            wait_signal_c=1'b1;
+            forward_select_A_c=2'b11;
       end
-      else if (Rd_Mem!=5'b0 && Rd_Mem==Rsrc1 && mem_wEn_Mem==1'b1) begin //conflict with Mem stage
-        wait_signal_c=1'b1;
-        forward_select_A_c=2'b01;  
+      else if (Rd_Mem!=5'b0 && Rd_Mem==Rsrc1 && mem_wEn_Mem==1'b1 && opcode_Mem!=`B_TYPE) begin //conflict with Mem stage
+            wait_signal_c=1'b1;
+            forward_select_A_c=2'b01;    
       end
-      else if (Rd_Exec!= 5'b0 && Rd_Exec==Rsrc1 && mem_wEn_Exec==1'b1) begin // conflict with Exec stage
-        wait_signal_c=1'b1;
-        forward_select_A_c=2'b10;  
+      else if (Rd_Exec!= 5'b0 && Rd_Exec==Rsrc1 && mem_wEn_Exec==1'b1 && opcode_Exec!=`B_TYPE ) begin // conflict with Exec stage
+          wait_signal_c=1'b1;
+          forward_select_A_c=2'b10;  
       end
       else begin
       // no conflict
         operand_A=Rdata1;
       end
       // conflict with Rsrc2, wait for 1 cycle
-      if (Rd_WB!=5'b0 && Rd_WB==Rsrc2 && wrEN_WB==1'b1) begin
-        wait_signal_c=1'b1;
-        forward_select_B_c=2'b11;
+      if (Rd_WB!=5'b0 && Rd_WB==Rsrc2 && wrEN_WB==1'b1 && opcode_WB!=`B_TYPE && opcode_WB!=`S_TYPE) begin
+            wait_signal_c=1'b1;
+            forward_select_B_c=2'b11;
       end
-      else if (Rd_Mem!=5'b0 && Rd_Mem==Rsrc2 && mem_wEn_Mem==1'b1) begin
-        wait_signal_c=1'b1;
-        forward_select_B_c=2'b01;   
+      else if (Rd_Mem!=5'b0 && Rd_Mem==Rsrc2 && mem_wEn_Mem==1'b1 && opcode_Mem!=`B_TYPE ) begin
+            wait_signal_c=1'b1;
+            forward_select_B_c=2'b01;
+   
       end
-      else if (Rd_Exec!= 5'b0 && Rd_Exec==Rsrc2 && mem_wEn_Exec==1'b1) begin
-        wait_signal_c=1'b1;
-        forward_select_B_c=2'b10;  
+      else if (Rd_Exec!= 5'b0 && Rd_Exec==Rsrc2 && mem_wEn_Exec==1'b1 && opcode_Exec!=`B_TYPE ) begin
+          wait_signal_c=1'b1;
+          forward_select_B_c=2'b10;  
       end
       else begin
         // no conflict
@@ -257,18 +259,20 @@ always @(*) begin
   //start
   else begin 
     // dont care about WB situation because path is short compared to branch path
-    if (Rd_Mem!=5'b0 && Rd_Mem==Rsrc1 && mem_wEn_Mem==1'b1) begin //not a store operation and write back desitination same as required reg address
-      forward_select_A_Dec=2'b01;  // forward WB data to Exec in next cycle
+    if (Rd_Mem!=5'b0 && Rd_Mem==Rsrc1 && mem_wEn_Mem==1'b1 && opcode_Mem!=`B_TYPE ) begin //not a store operation and write back desitination same as required reg address
+            forward_select_A_Dec=2'b01;  // forward WB data to Exec in next cycle
     end
-    else if (Rd_Exec!= 5'b0 && Rd_Exec==Rsrc1 && mem_wEn_Exec==1'b1)
-      forward_select_A_Dec=2'b10; // forward Mem data to Exec in next cycle
+    else if (Rd_Exec!= 5'b0 && Rd_Exec==Rsrc1 && mem_wEn_Exec==1'b1 && opcode_Exec!=`B_TYPE)  begin 
+            forward_select_A_Dec=2'b10; // forward Mem data to Exec in next cycle
+    end
     else 
       forward_select_A_Dec=2'b00;  // dont forward data
-    if (Rd_Mem!=5'b0 && Rd_Mem==Rsrc2 && mem_wEn_Mem==1'b1) begin //not a store operation and write back desitination same as required reg address
-      forward_select_B_Dec=2'b01;   // forward WB data to Exec in next cycle
+    if (Rd_Mem!=5'b0 && Rd_Mem==Rsrc2 && mem_wEn_Mem==1'b1 && opcode_Mem!=`B_TYPE) begin //not a store operation and write back desitination same as required reg address
+          forward_select_B_Dec=2'b01;   // forward WB data to Exec in next cycle
     end
-    else if (Rd_Exec!= 5'b0 && Rd_Exec==Rsrc2 && mem_wEn_Exec==1'b1)
-      forward_select_B_Dec=2'b10;   // forward Mem data to Exec in next cycle
+    else if (Rd_Exec!= 5'b0 && Rd_Exec==Rsrc2 && mem_wEn_Exec==1'b1 && opcode_Exec!=`B_TYPE) begin
+            forward_select_B_Dec=2'b10;   // forward Mem data to Exec in next cycle
+    end
     else 
       forward_select_B_Dec=2'b00;    // dont forward data
   end

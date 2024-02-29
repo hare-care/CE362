@@ -32,7 +32,7 @@ module Top_tb;
       // Load program
       #0 $readmemh("./fibo10_dp-mem_in.hex", CPU.IF.IMEM.Mem);  // insrtuction memory input
       #0 $readmemh("./fibo10_dp-mem_in.hex", CPU.Mem.DMEM.Mem);  // data memory input
-      //#0 $readmemh("regs_in.hex", CPU.RF.Mem);  //register file input 
+      #0 $readmemh("./rand_regs_in.hex", CPU.Dec.RF.Mem);  //register file input 
       #0 clk = 0; exit =0;
       #10 rst = 0;
       #0 rst = 1;

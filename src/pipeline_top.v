@@ -75,7 +75,7 @@ reg wb_sel_Exec,wb_sel_Mem,wb_sel_WB;
 
 
 // new signals
-wire [6:0] opcode_Mem;
+wire [6:0] opcode_Exec,opcode_Mem,opcode_WB;
 
 wire npc_control_Dec;  // from Dec to IF
 
@@ -152,6 +152,8 @@ decode_stage Dec (
     .Data_mem_Mem(Data_mem_Mem),
     .ALU_output_Mem(ALU_output_Mem),
     .opcode_Mem(opcode_Mem),
+    .opcode_Exec(opcode_Exec),
+    .opcode_WB(opcode_WB),
     //output 
     //to Exec
     // .operand_A(A_Dec),
@@ -180,6 +182,7 @@ execution Exec (
     .PC(PC_Exec_in),
     .forward_select_A(forward_select_A_Exec),
     .forward_select_B(forward_select_B_Exec),
+    .instruction_Exec(Instruction_Exec),
     //from WB
     .RWrdata_WB(RWrdata_WB),
     //from Mem
@@ -189,7 +192,8 @@ execution Exec (
     // .operand_B(operand_B_Exec),
     //ALU calculation result
     .Rdata2_out(Rdata2_Exec_out),
-    .ALU_result(ALU_output_Exec)
+    .ALU_result(ALU_output_Exec),
+    .opcode_Exec(opcode_Exec)
     );
 
 // memory
@@ -201,14 +205,14 @@ mem_access Mem(
     .branch_op(branch_op_Mem),
     .MemSize(MemSize_Mem),
     //from exec
-    .instruction(Instruction_Mem),
+    .instruction_Mem(Instruction_Mem),
     // .PC(PC_Mem),
     .imm32(Imm_Mem),
     .Rdata2(Rdata2_Mem),
     .ALU_result(ALU_output_Mem),
     //output 
     .DataWord(Data_mem_Mem),
-    .opcode(opcode_Mem)
+    .opcode_Mem(opcode_Mem)
 );
 
 // WB
@@ -217,8 +221,10 @@ write_back WB(
     .wb_sel(wb_sel_WB),
     .ALU_result(ALU_output_WB),
     .DataWord(Data_mem_WB),
+    .instruction_WB(Instruction_WB),
     // output to reg_file
-    .RWrdata(RWrdata_WB)
+    .RWrdata(RWrdata_WB),
+    .opcode_WB(opcode_WB)
 );
 // pipeline registers
 always @(posedge clk or negedge rstn) begin 

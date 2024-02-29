@@ -1,1 +1,0 @@
-iverilog -o output defines.v alu.v mini_decoder.v branch_unit.v  decoder.v decode_stage.v execution.v ifetch.v mem_access.v mem_reg_library.v write_back.v control.v pipeline_top.v Top_tb.v

@@ -114,7 +114,7 @@ always @(*) begin
     op_B_sel <= 1;  // use immediate
     wb_sel <= 0;
     wEn <= 1;
-    ALU_Control <= `ADD;
+    ALU_Control <= `STORE;
     case (funct3)
       3'b000: MemSize<=`SIZE_BYTE; //store byte
       3'b001: MemSize<=`SIZE_HWORD; // store half word

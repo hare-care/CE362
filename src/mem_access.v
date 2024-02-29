@@ -10,18 +10,18 @@ module mem_access(
     input branch_op,       
     input [1:0]MemSize,
     // from execution stage 
-    input [31:0] instruction,
+    input [31:0] instruction_Mem,
     // input [31:0] PC,
     input [31:0] imm32,
     input [31:0] Rdata2,
     // input [31:0]operand_B,     
     input [31:0]ALU_result,  
     output [31:0]DataWord,
-    output [6:0] opcode
+    output [6:0] opcode_Mem
 
 );
 
-assign opcode = instruction[6:0];
+assign opcode_Mem = instruction_Mem[6:0];
 // data memory access
 DataMem DMEM(
     .Addr(ALU_result), 
