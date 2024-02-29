@@ -1,0 +1,8 @@
+93 00 00 00     //          addi x1, x0, 0
+13 01 00 00     //          addi x2, x0, 0
+93 01 a0 00     //          addi x3, x0, 10
+6f 00 c0 00     //          jal x0, cond
+93 80 10 02     //  body:   addi x1, x1, 33
+13 01 11 00     //          addi x2, x2, 1
+e3 4c 31 fe     //  cond:   blt x2, x3, body
+00 00 00 00     //          halt

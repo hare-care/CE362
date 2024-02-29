@@ -77,7 +77,7 @@ always @(*) begin
         `S_TYPE: imm32 = s_imm_32; // S-type
         `B_TYPE: imm32 = sb_imm_32; // Branches
         // `J_JAL: imm32 = uj_imm_32; // JAL
-        // `I_JALR: imm32 = i_imm_32; // JALR
+        `I_JALR: imm32 = i_imm_32; // JALR
         `U_AUIPC: imm32 = u_imm_32; // Auipc
         `U_LUI: imm32 = u_imm_32; // Lui
         default: imm32 = 0; // default

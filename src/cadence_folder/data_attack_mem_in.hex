@@ -1,0 +1,13 @@
+93 00 80 3e        //addi x1, x0, 1000     initial x1
+13 01 80 3e        //addi x2, x0, 1000     initial x2
+b3 81 20 00        //add  x3, x1, x2	   calculate x3
+33 82 01 00        //add  x4, x3, x0	   calculate x4 there should be a ALU-ALU forwarding
+b3 82 01 00        //add  x5, x3, x0	   calculate x5, there should be a MEM-ALU forwarding
+33 83 01 00        //add  x6, x3, x0	   calculate x6, there should be a WB-ALU forwarding
+93 03 40 03        //addi x7, x0, 52	   calculate x7, which is the address of data
+23 a0 33 00        //sw x3, 0(x7)	       store x3 to the second address, there should be a ALU-ALU
+03 a4 03 00        //lw x8, 0(x7) 	       load x7 to x8
+13 00 00 00        //addi x0, x0, 0	       wait lw
+b3 04 04 00        //add x9, x8, x0	       calculate x9, there should be a MEM-ALU forwarding
+33 05 04 00        //add x10, x8, x0	   calculate x10, there should be a WB-ALU forwarding
+00 00 00 00

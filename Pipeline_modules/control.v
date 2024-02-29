@@ -1,9 +1,8 @@
 module control  (
   // Inputs from iFetch
-  input [31:0] PC,
   input [31:0] instruction,
   // Outputs to Reg File
-  output reg wEn,
+  output reg wEn,   //write back to register file
   // Outputs to Execute/ALU
   output reg [1:0] op_A_sel,                 // select operand A, 00: readdata1, 01: PC, 10: PC+4, 11:0
   output reg op_B_sel,                      // 0:immediate, 1: readdata2
@@ -27,17 +26,18 @@ assign funct3 = instruction[14:12];
 
 //assign branch_op = opcode==`B_TYPE;
 // assign mem_wEn=(opcode==`S_TYPE)?1'b1:1'b0; 
-// assign wb_sel=(opcode=`I_TYPE_LOAD)?1'b1:1'b0;		 
+// assign wb_sel=(opcode=`I_TYPE_LOAD)?1'b1:1'b0;	
+
 //signal calculations for most wires 
 always @(*) begin 
   case (opcode) 
     `R_TYPE: begin // R-type
     branch_op <= 0;
-    mem_wEn <= 0;
+    mem_wEn <= 1;
     op_A_sel <= 2'b00; // use data from register 
     op_B_sel <= 0; // use data from register
     wb_sel <= 0; //write back ALU result 
-    wEn <= 1;
+    wEn <= 0;
         case (funct3)
               3'b000 : begin
                   if (funct7 == 7'b0000000) begin//add
@@ -66,11 +66,11 @@ always @(*) begin
     end 		  
   `I_TYPE: begin //I-type
     branch_op <= 0;
-    mem_wEn <= 0;
+    mem_wEn <= 1;
     op_A_sel <= 2'b00;// use data from register
     op_B_sel <= 1; // use immediate data
     wb_sel <= 0;
-    wEn <= 1;
+    wEn <= 0;
         case (funct3)
           3'b000: ALU_Control <= `ADD;
           3'b001:ALU_Control <=`SLL;
@@ -91,16 +91,16 @@ always @(*) begin
   end
       `I_TYPE_LOAD: begin //Load
     branch_op <= 0;
-    mem_wEn <= 0;  
+    mem_wEn <= 1;  
     op_A_sel <= 2'b00;
     op_B_sel <= 1;
     wb_sel <= 1;
-    wEn <= 1;  //reg file write enable 
+    wEn <= 0;  //reg file write enable 
     ALU_Control <= `ADD;
     case (funct3)
       3'b000 :begin MemSize<=`SIZE_BYTE; load_extend_sign<= 1'b1; end// lb
       3'b001 : begin MemSize<=`SIZE_HWORD; load_extend_sign<= 1'b1; end // lh 
-      3'b010 : MemSize<= `SIZE_WORD; //lw
+      3'b010 : begin MemSize<= `SIZE_WORD; load_extend_sign<=1'b1; end//lw 
       3'b100:begin MemSize<=`SIZE_BYTE;load_extend_sign<= 1'b0; end//lbu 
       3'b101:begin MemSize<=`SIZE_HWORD;load_extend_sign<= 1'b0; end//lhu
       default: begin MemSize<=`SIZE_BYTE;load_extend_sign<= 1'b0; end
@@ -108,11 +108,11 @@ always @(*) begin
   end 
       `S_TYPE: begin //Store, set mem(rs1+immediate) to 8 LSB of rs2/16 LSB of rs2/ 32bit of rs2
     branch_op <= 0;
-    mem_wEn <= 1; // write to memory from rs2
+    mem_wEn <= 0; // write to memory from rs2
     op_A_sel <= 2'b00; //rs1
     op_B_sel <= 1;  // use immediate
     wb_sel <= 0;
-    wEn <= 0;
+    wEn <= 1;
     ALU_Control <= `ADD;
     case (funct3)
       3'b000: MemSize<=`SIZE_BYTE; //store byte
@@ -123,11 +123,11 @@ always @(*) begin
   end
       `B_TYPE : begin //Branch 
       branch_op <= 1;   // branch_flag
-      mem_wEn <= 0;
+      mem_wEn <= 1;
       op_A_sel <= 2'b00;  //rs1
       op_B_sel <= 0;  //rs2
       wb_sel <= 0;
-      wEn <= 0;
+      wEn <= 1;
       case (funct3)
           3'b000 : ALU_Control<=`BEQ;
           3'b001: ALU_Control<=`BNE;
@@ -140,38 +140,38 @@ always @(*) begin
   end
   `I_JALR: begin //Jalr, set rd<=pc+4 and jump tp address rs1+immediate
     branch_op <= 0;
-    mem_wEn <= 0;
+    mem_wEn <= 1;
     op_A_sel <= 2'b10; //operanda<= PC + 4, stores to rd
     op_B_sel <= 0;  // doesnt matter
     wb_sel <= 0;
-    wEn <= 1;
+    wEn <= 0;
     ALU_Control <= `JALR; // pass through 
   end
   `J_JAL: begin //Jal, set rd<=pc+4, then jump to address pc+immediate
     branch_op <= 0;
-    mem_wEn <= 0;
+    mem_wEn <= 1;
     op_A_sel <= 2'b10;  // PC + 4 , stores to rd
     op_B_sel <= 0; // doesnt matter
     wb_sel <= 0;
-    wEn <= 1;
+    wEn <= 0;
     ALU_Control <= `JAL; // pass through
   end
   `U_AUIPC: begin //Auipc//
     //branch_op <= 0;
-    mem_wEn <= 0;
+    mem_wEn <= 1;
     op_A_sel <= 2'b01; // PC
     op_B_sel <= 1; //  use immediate
     wb_sel <= 0;
-    wEn <= 1;
+    wEn <= 0;
     ALU_Control <=`ADD;  // PC+ immediate
   end
   `U_LUI : begin //Lui
     branch_op <= 0;
-    mem_wEn <= 0;
+    mem_wEn <= 1;
     op_A_sel <= 2'b11; // hard code to zero  
     op_B_sel <= 1;     //  use immediate
     wb_sel <= 0;
-    wEn <= 1;
+    wEn <= 0;
     ALU_Control <= `ADD; // 0+immediate
   end
   endcase 

@@ -20,13 +20,12 @@ module InstMem(Addr, Size, DataOut, CLK);
 endmodule // InstMem
 
 //---------------------------------data cache---------------------------------------------
-module DataMem(Addr, Size,load_extend_sign, DataIn, DataOut, WEN, CLK);
+module DataMem(Addr, Size, load_extend_sign, DataIn, DataOut, WEN, CLK);
    input [31:0] Addr;
    input [1:0] 	Size; 
    input load_extend_sign;  
    input [31:0] DataIn;   
-   output [31:0] DataOut;
-   reg [31:0] DataOut;   
+   output reg[31:0] DataOut;
    input      WEN, CLK;
    reg [7:0] 	Mem[0:1024];
 
@@ -36,31 +35,47 @@ module DataMem(Addr, Size,load_extend_sign, DataIn, DataOut, WEN, CLK);
    assign AddrW = Addr & 32'hfffffffc;
 
 //load memory
-   always @ * 
-     DataOut = (Size == 2'b00 && load_extend_sign==1'b1) ? {{24{Mem[Addr][7]}},Mem[Addr]} :  // byte
-      (Size == 2'b00 && load_extend_sign==1'b0)?{24'b0,Mem[Addr]}:// unsigned
-	       (Size == 2'b01 && load_extend_sign==1'b1) ? {{16{Mem[AddrH+1][7]}},Mem[AddrH+1],Mem[AddrH]} : // half word, 2 bytes
-		((Size == 2'b01 && load_extend_sign==1'b0)?{16'b0,Mem[AddrH+1],Mem[AddrH]}: // unsigned
-      {Mem[AddrW+3], Mem[AddrW+2], Mem[AddrW+1], Mem[AddrW]}); //word, 4 bytes
+always @ (*) begin
+    if (Size == `SIZE_BYTE && load_extend_sign == 1'b1) begin
+        // Sign-extended byte
+        DataOut = {{24{Mem[Addr][7]}}, Mem[Addr]};
+    end else if (Size == `SIZE_BYTE && load_extend_sign == 1'b0) begin
+        // Zero-extended byte
+        DataOut = {24'b0, Mem[Addr]};
+    end else if (Size == `SIZE_HWORD && load_extend_sign == 1'b1) begin
+        // Sign-extended half word (2 bytes)
+        DataOut = {{16{Mem[AddrH+1][7]}}, Mem[AddrH+1], Mem[AddrH]};
+    end else if (Size == `SIZE_HWORD && load_extend_sign == 1'b0) begin
+        // Zero-extended half word (2 bytes)
+        DataOut = {16'b0, Mem[AddrH+1], Mem[AddrH]};
+    end else if (Size == `SIZE_WORD) begin
+        // Word (4 bytes), assuming this is the default case
+        DataOut = {Mem[AddrW+3], Mem[AddrW+2], Mem[AddrW+1], Mem[AddrW]};
+    end else begin
+        DataOut = 32'bx;
+    end
+end
+
+
  //write to memory  
-   always @ (negedge CLK)
-     if (!WEN) begin
-	case (Size)
-	  2'b00: begin // Write byte
-	     Mem[Addr] <= DataIn[7:0];
-	  end
-	  2'b01: begin  // Write halfword
-	     Mem[AddrH] <= DataIn[7:0];
-	     Mem[AddrH+1] <= DataIn[15:8];
-	  end
-	  2'b10, 2'b11: begin // Write word
-	     Mem[AddrW] <= DataIn[7:0];
-	     Mem[AddrW+1] <= DataIn[15:8];
-	     Mem[AddrW+2] <= DataIn[23:16];
-	     Mem[AddrW+3] <= DataIn[31:24];
-	  end
-	endcase // case (Size)
-     end // if (!WEN)
+always @ (negedge CLK)
+  if (!WEN) begin
+    case (Size)
+      2'b00: begin // Write byte
+        Mem[Addr] <= DataIn[7:0];
+      end
+      2'b01: begin  // Write halfword
+        Mem[AddrH] <= DataIn[7:0];
+        Mem[AddrH+1] <= DataIn[15:8];
+      end
+      2'b10, 2'b11: begin // Write word
+        Mem[AddrW] <= DataIn[7:0];
+        Mem[AddrW+1] <= DataIn[15:8];
+        Mem[AddrW+2] <= DataIn[23:16];
+        Mem[AddrW+3] <= DataIn[31:24];
+      end
+    endcase // case (Size)
+  end // if (!WEN)
       
 endmodule // InstMem
 //---------------------------------------register file----------------------------------

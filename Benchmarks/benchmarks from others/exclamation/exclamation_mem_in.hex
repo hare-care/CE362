@@ -1,0 +1,10 @@
+93 00 00 00         //addi x1, x0, 0	initiate x1
+13 01 b0 00         //addi x2, x0, 11	initiate x2
+93 01 a0 00         //addi x3, x0,10	initiate x3
+13 02 10 00         //addi x4, x0, 1	initiate x4
+93 02 a0 00         //addi x5, x0, 11	initiate x5
+33 01 31 02         //mul x2, x2, x3	calculate x2*x3
+b3 81 41 40         //sub x3, x3, x4	x3 -= 1
+b3 80 40 00         //add x1, x1, x4	x1+=1
+e3 ca 50 fe         //blt x1, x5, -12	if x1<11 then back to mul
+00 00 00 00
