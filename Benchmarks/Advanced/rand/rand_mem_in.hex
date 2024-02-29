@@ -1,41 +1,41 @@
-09402503        // lw x10 148 x0
-09802583        // lw x11 152 x0      
-09c02603        // lw x12 156 x0     
-070000ef        // jal x1 112 <lcg>       
-00100693        // addi x13 x0 1     
-0a002703        // lw x14 160 x0
-04070e63        // beq x14 x0 92 <end>       
-fff70713        // addi x14 x14 -1        
-05c000ef        // jal x1 92 <lcg>       
-07f57793        // andi x15 x10 127      
-06400293        // addi x5 x0 100 
-0057c863        // blt x15 x5 16 <sec_check> 
-fff6c693        // xori x13 x13 -1        
-00168693        // addi x13 x13 1      
-03c000ef        // jal x1 60 <end>
-05000293        // addi x5 x0 80
-0057c863        // blt x15 x5 16 <third_check>
-00300813        // addi x16 x0 3
-030686b3        // mul x13 x13 x16
-028000ef        // jal x1 40 <end>
-00800293        // addi x5 x0 8
-00f2c663        // blt x5 x15 12 <fourth_check>
-7ff68693        // addi x13 x13 2047
-018000ef        // jal x1 24 <end>
-01900293        // addi x5 x0 25
-00f2c663        // blt x5 x15 12 <default>
-fc768693        // addi x13 x13 -57
-008000ef        // jal x1 8 <end>
-00168693        // addi x13 x13 1
-fa5ff06f        // jal x0 -92 <loop>
-00000000
-02b50533        // mul x10 x10 x11
-00c50533        // add x10 x10 x12
-00000397        // auipc x7 0x0 <main>
-01038393        // addi x7 x7 16
-00a3a023        // sw x10 0 x7
-00008067        // jalr x0 x1 0
-0000002a        // seed
-0019660d        // a
-3c6ef35f        // b
-0000000a        // count
+09 40 25 03        // lw x10 148 x0
+09 80 25 83        // lw x11 152 x0      
+09 c0 26 03        // lw x12 156 x0     
+07 00 00 ef        // jal x1 112 <lcg>       
+00 10 06 93        // addi x13 x0 1     
+0a 00 27 03        // lw x14 160 x0
+04 07 0e 63        // beq x14 x0 92 <end>       
+ff f7 07 13        // addi x14 x14 -1        
+05 c0 00 ef        // jal x1 92 <lcg>       
+07 f5 77 93        // andi x15 x10 127      
+06 40 02 93        // addi x5 x0 100 
+00 57 c8 63        // blt x15 x5 16 <sec_check> 
+ff f6 c6 93        // xori x13 x13 -1        
+00 16 86 93        // addi x13 x13 1      
+03 c0 00 ef        // jal x1 60 <end>
+05 00 02 93        // addi x5 x0 80
+00 57 c8 63        // blt x15 x5 16 <third_check>
+00 30 08 13        // addi x16 x0 3
+03 06 86 b3        // mul x13 x13 x16
+02 80 00 ef        // jal x1 40 <end>
+00 80 02 93        // addi x5 x0 8
+00 f2 c6 63        // blt x5 x15 12 <fourth_check>
+7f f6 86 93        // addi x13 x13 2047
+01 80 00 ef        // jal x1 24 <end>
+01 90 02 93        // addi x5 x0 25
+00 f2 c6 63        // blt x5 x15 12 <default>
+fc 76 86 93        // addi x13 x13 -57
+00 80 00 ef        // jal x1 8 <end>
+00 16 86 93        // addi x13 x13 1
+fa 5f f0 6f        // jal x0 -92 <loop>
+00 00 00 00
+02 b5 05 33        // mul x10 x10 x11
+00 c5 05 33        // add x10 x10 x12
+00 00 03 97        // auipc x7 0x0 <main>
+01 03 83 93        // addi x7 x7 16
+00 a3 a0 23        // sw x10 0 x7
+00 00 80 67        // jalr x0 x1 0
+00 00 00 2a        // seed
+00 19 66 0d        // a
+3c 6e f3 5f        // b
+00 00 00 0a        // count
