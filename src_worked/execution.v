@@ -22,13 +22,24 @@ module execution(
 );
 reg [31:0] operand_A; // operand A
 reg [31:0] operand_B;  // operand B
+
+  wire [31:0] mul_result;
+  wire [31:0] ALU_result_temp;
+  
 //ALU
 ALU ALU_inst (
   .ALU_Control(ALU_Control),  
   .operand_A(operand_A),      
   .operand_B(operand_B),      
-  .ALU_result(ALU_result)     
+  .ALU_result(ALU_result_temp)     
 );
+
+multiply mul_inst (
+  .a(operand_A),
+  .b(operand_B),
+  .c(mul_result)
+);
+assign ALU_result = (ALU_Control == `MUL)? mul_result : ALU_result_temp;
 
 /*adding data path in operand a and b mux to fix data hazard*/
 

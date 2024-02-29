@@ -26,6 +26,8 @@
 `define SRA  6'b000111  
 `define OR 6'b001000
 `define AND 6'b001001 
+//store
+`define STORE 6'b101010 
 // branch
 `define BEQ  6'b001010  // Branch if Equal
 `define BNE  6'b001011  // Branch if Not Equal
@@ -38,4 +40,4 @@
 `define JAL 6'b011111
 `define DEFAULT 6'bx
 //multiply
-`define MUL 6'b0110011
+`define MUL 6'b110011
