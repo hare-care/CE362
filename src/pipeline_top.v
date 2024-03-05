@@ -8,7 +8,7 @@ module pipeline_top (
 // reg halt;
 
 // stall and flush
-wire stall_all, stall_IF, stall_Dec;  // stall in top level register 
+wire stall_all, stall_IF, stall_Dec, stall_Exec;  // stall in top level register 
 wire flush_all, flush_IF, flush_Dec; // flush in top level register
 wire wait_signal_Dec;  // decode stage output, stall signal
 wire IF_stall; //input to IF module
@@ -91,15 +91,21 @@ reg halt_Dec,halt_Exec,halt_Mem,halt_WB;
 //reg [31:0] Rt_Dec, Rt_Exec;  // not sure what it is 
 //reg [31:0] Reg_dest_Exec, Reg_dest_Mem, Reg_dest_WB;
 //reg [31:0] Zero_Exec, Zero_Mem;
+
+wire stall_hazard_if, stall_hazard_dec, stall_hazard_ex;
+
 //stall control
-assign stall_IF=stall_Dec||halt_IF;
-assign stall_all=1'b0;   // for future use
-assign stall_Dec=wait_signal_Dec;  //stall when halt appears
+assign stall_IF=stall_Dec||halt_IF||stall_hazard_if;
+//assign stall_all=1'b0;   // for future use
+assign stall_Dec=wait_signal_Dec||stall_hazard_dec;  //stall when halt appears
 // assign halt_out = halt_WB;
 assign instr_out = Instruction_Dec;
 assign data_out = RWrdata_WB;
 
+assign stall_Exec = stall_hazard_ex;
+
 assign IF_stall=stall_IF||stall_all;
+
 
 // fetch
 ifetch IF (
@@ -215,6 +221,21 @@ mem_access Mem(
     .opcode_Mem(opcode_Mem)
 );
 
+hazard hazard (
+    .clk(clk),
+    .rst(rstn),
+    .instruction(Instruction_Mem),
+    .stall_if(stall_all),
+    .stall_dec(stall_hazard_dec),
+    .stall_ex(stall_hazard_ex)
+);
+
+
+assign stall_hazard_dec = 1'b0;
+assign stall_hazard_if = 1'b0;
+assign stall_hazard_ex = 1'b0;
+
+
 // WB
 write_back WB(
     //control
@@ -319,12 +340,12 @@ always @(posedge clk or negedge rstn) begin
         forward_select_A_Exec<=(stall_all | stall_Dec)?forward_select_A_Exec:forward_select_A_Dec;
         forward_select_B_Exec<=(stall_all | stall_Dec)? forward_select_B_Exec:forward_select_B_Dec;
 
-        wrEn_Mem<=(stall_all)? wrEn_Mem : wrEn_Exec; // duplicate in question
-        branch_op_Mem<=(stall_all)? branch_op_Mem : branch_op_Exec;
-        mem_wEn_Mem<=(stall_all)? mem_wEn_Mem : mem_wEn_Exec;
-        MemSize_Mem<=(stall_all)? MemSize_Mem : MemSize_Exec;
-        load_extend_sign_Mem<=(stall_all)? load_extend_sign_Mem : load_extend_sign_Exec;
-        wb_sel_Mem<=(stall_all)? wb_sel_Mem : wb_sel_Exec;
+        wrEn_Mem<=(stall_all | stall_Exec)? wrEn_Mem : wrEn_Exec; // duplicate in question
+        branch_op_Mem<=(stall_all | stall_Exec)? branch_op_Mem : branch_op_Exec;
+        mem_wEn_Mem<=(stall_all | stall_Exec)? mem_wEn_Mem : mem_wEn_Exec;
+        MemSize_Mem<=(stall_all | stall_Exec)? MemSize_Mem : MemSize_Exec;
+        load_extend_sign_Mem<=(stall_all | stall_Exec)? load_extend_sign_Mem : load_extend_sign_Exec;
+        wb_sel_Mem<=(stall_all | stall_Exec)? wb_sel_Mem : wb_sel_Exec;
 
         wb_sel_WB<=(stall_all)? wb_sel_WB : wb_sel_Mem;
         wrEn_Mem<=(stall_all)? wrEn_Mem : wrEn_Exec; // there seems to be duplicate is this right?
@@ -343,11 +364,11 @@ always @(posedge clk or negedge rstn) begin
         Instruction_Exec<=(stall_all | stall_Dec)?Instruction_Exec:Instruction_Dec;
 
         // PC_Mem <= (stall_all)? PC_Mem : PC_Exec_out;
-        ALU_output_Mem <= (stall_all)? ALU_output_Mem : ALU_output_Exec;
-        Rdata2_Mem<= (stall_all)? Rdata2_Mem : Rdata2_Exec_out;
-        Rd_Mem<= (stall_all)? Rd_Mem : Rd_Exec;  // add more rd 
-        jump_flag_Mem<= (stall_all)? jump_flag_Mem : jump_flag_Exec; // add jump flag
-        Instruction_Mem<=(stall_all)? Instruction_Mem:Instruction_Exec;
+        ALU_output_Mem <= (stall_all | stall_Exec)? ALU_output_Mem : ALU_output_Exec;
+        Rdata2_Mem<= (stall_all | stall_Exec)? Rdata2_Mem : Rdata2_Exec_out;
+        Rd_Mem<= (stall_all | stall_Exec)? Rd_Mem : Rd_Exec;  // add more rd 
+        jump_flag_Mem<= (stall_all | stall_Exec)? jump_flag_Mem : jump_flag_Exec; // add jump flag
+        Instruction_Mem<=(stall_all | stall_Exec)? Instruction_Mem:Instruction_Exec;
 
         Data_mem_WB <= (stall_all)? Data_mem_WB : Data_mem_Mem;
         ALU_output_WB <= (stall_all)? ALU_output_WB : ALU_output_Mem;
