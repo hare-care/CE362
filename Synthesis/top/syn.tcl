@@ -5,7 +5,7 @@ set_db lef_library /vol/ece303/genus_tutorial/NangateOpenCellLibrary.lef
 # ifetch 
 read_hdl ../../src/defines.v ../../src/ifetch.v ../../src/mini_decoder.v ../../src/mem_reg_library.v
 elaborate
-current_design iftech
+current_design ifetch
 syn_generic
 syn_map
 syn_opt
@@ -35,7 +35,7 @@ syn_map
 syn_opt
 
 # writeback
-read_hdl ../../src/defines.v ../..write_back.v
+read_hdl ../../src/defines.v ../../src/write_back.v
 elaborate
 current_design write_back
 syn_generic
